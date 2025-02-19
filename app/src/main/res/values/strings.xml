@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">SE_ICM</string>
+
+    <string name="main_config_sensor_ic">Icono de Configuración</string>
+    <string name="main_config_sensor">Configurar Sensor</string>
+
+    <string name="main_other_ic">Icono de otra funcionalidad</string>
+    <string name="main_other">Icono de otra funcionalidad</string>
+
+    <string name="config_sensor_title">Configuracion del sensor</string>
+    <string name="config_seat_belt_sensor_ic">Icono de configuración</string>
+    <string name="config_seat_belt_sensor">Sensor de cinturon se seguridad</string>
+    <string name="config_weight_sensor_ic">Icono de configuración</string>
+    <string name="config_weight_sensor">Sensor de peso</string>
+    <string name="config_sensor_other_ic">Icono de otro sensor</string>
+    <string name="config_sensor_other">Otro Sensor</string>
+
+    <string name="select_device_title">Seleccionar dispositivo</string>
+    <string name="select_device_subtitle">Buscando dispositivoso</string>
+    <string name="select_device_finish_scan">Escaneo Terminado</string>
+
+    <string name="seatbelt_sensor_title">Sensor de cinturon de seguridad</string>
+    <string name="seatbelt_sensor_send">Enviar mensaje</string>
+
+    <string name="weight_sensor_title">Sensor de peso</string>
+    <string name="weight_sensor_send">Enviar mensaje</string>
+</resources>
