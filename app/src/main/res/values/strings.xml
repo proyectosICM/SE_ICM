@@ -23,5 +23,6 @@
     <string name="seatbelt_sensor_send">Enviar mensaje</string>
 
     <string name="weight_sensor_title">Sensor de peso</string>
+    <string name="weight_sensor_current">Sensor de peso</string>
     <string name="weight_sensor_send">Enviar mensaje</string>
 </resources>

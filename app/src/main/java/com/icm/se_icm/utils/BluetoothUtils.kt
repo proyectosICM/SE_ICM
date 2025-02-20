@@ -24,6 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.icm.se_icm.BleManager
 import com.icm.se_icm.ConfigSensorActivity
 import com.icm.se_icm.SeatbeltSensorActivity
 import com.icm.se_icm.SelectDeviceActivity
@@ -137,26 +138,28 @@ object BluetoothUtils {
                 }
             }
 
-            device.connectGatt(context, false, object : BluetoothGattCallback() {
+            val gattCallback = object : BluetoothGattCallback() {
                 override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         Log.d("BLE", "Conectado a ${device.name}")
                         showDialogOnMainThread(context, "Conectado a ${device.name}")
+
+                        // Guardamos el GATT en BleManager
+                        BleManager.bluetoothGatt = gatt
+
                         gatt?.discoverServices()
-                        // val intent = Intent(context, SeatbeltSensorActivity::class.java)
-                        // intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK  // Esto es necesario si el contexto no es una actividad
-                        // context.startActivity(intent)
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         Log.d("BLE", "Desconectado de ${device.name}")
                         showDialogOnMainThread(context, "Desconectado de ${device.name}")
+
+                        // Liberamos el GATT en BleManager
+                        BleManager.bluetoothGatt = null
                     }
                 }
 
                 override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                     if (status == BluetoothGatt.GATT_SUCCESS && gatt != null) {
                         Log.d("BLE", "Servicios descubiertos en ${gatt.device.name}")
-
-
 
                         val serviceList = ArrayList<String>()
                         for (service in gatt.services) {
@@ -175,27 +178,26 @@ object BluetoothUtils {
                         }
 
                         // Pasar los datos a la otra actividad
-
-
-                        if(selectedSensor.equals("seat_belt")){
-                            val intent = Intent(context, SeatbeltSensorActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            intent.putStringArrayListExtra("services", serviceList)
-                            context.startActivity(intent)
+                        val intent = when (selectedSensor) {
+                            "seat_belt" -> Intent(context, SeatbeltSensorActivity::class.java)
+                            "weight" -> Intent(context, WeightSensorActivity::class.java)
+                            else -> null
                         }
 
-                        if(selectedSensor.equals("weight")){
-                            val intent = Intent(context, WeightSensorActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            intent.putStringArrayListExtra("services", serviceList)
-                            context.startActivity(intent)
+                        intent?.let {
+                            it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            it.putStringArrayListExtra("services", serviceList)
+                            context.startActivity(it)
                         }
-
                     } else {
                         Log.e("BLE", "Error al descubrir servicios, código: $status")
                     }
                 }
-            })
+            }
+
+            // Iniciamos la conexión
+            device.connectGatt(context, false, gattCallback)
+
         } catch (e: SecurityException) {
             e.printStackTrace()
             showDialogOnMainThread(context, "Error de permisos Bluetooth")
